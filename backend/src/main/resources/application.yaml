@@ -3,7 +3,7 @@ spring:
     name: backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/assistant_db
+    url: jdbc:postgresql://localhost:5432/assistant_db?options=-c%20timezone=Asia/Kolkata
     username: assistant_user
     password: assistant_pass
     driver-class-name: org.postgresql.Driver
