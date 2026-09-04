@@ -5,6 +5,7 @@ import com.assistant.backend.reminder.entity.Reminder;
 import com.assistant.backend.reminder.repository.ReminderRepository;
 import com.assistant.backend.task.entity.Task;
 import com.assistant.backend.task.repository.TaskRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,5 +57,12 @@ public class ReminderService {
 
     public List<Reminder> getDueReminders() {
         return reminderRepository.findByRemindAtBeforeAndSentFalse(LocalDateTime.now());
+    }
+    @Transactional
+    public void markAsSent(Long reminderId) {
+        Reminder reminder = reminderRepository.findById(reminderId)
+                .orElseThrow(() -> new RuntimeException("Reminder not found"));
+        reminder.setSent(true);
+        reminderRepository.save(reminder);
     }
 }
