@@ -25,7 +25,6 @@ public class ReminderScheduler {
         List<Reminder> dueReminders = reminderService.getDueReminders();
 
         for (Reminder reminder : dueReminders) {
-            // We now only extract the title directly from the connected Task
             ReminderDueEvent event = new ReminderDueEvent(
                     reminder.getId(),
                     reminder.getTask().getUser().getId(),
