@@ -1,5 +1,6 @@
 package com.assistant.backend.task.entity;
 
+import com.assistant.backend.user.entity.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,10 @@ public class Task {
 
     @Column (nullable = false)
     private String title;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private String description;
     private LocalDateTime dueAt;
@@ -29,6 +34,14 @@ public class Task {
 
     public String getTitle() {
         return title;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setTitle(String title) {

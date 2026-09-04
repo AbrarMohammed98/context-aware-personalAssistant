@@ -21,22 +21,15 @@ public class ReminderController {
     public Reminder createReminder(@RequestBody Reminder reminder){
         return reminderService.createReminder(reminder);
     }
-    @GetMapping
-    public List<Reminder> getAllReminder(){
-        return reminderService.getAllReminders();
-    }
+
     @GetMapping("/{id}")
     public Reminder getReminderById(@PathVariable Long id){
         return reminderService.getReminderById(id);
     }
     @GetMapping("/task/{taskId}")
     public List<Reminder> getReminderByTask(@PathVariable Long taskId){
-        Task task=new Task();
-        task.setId(taskId);
-        return reminderService.getRemindersByTask(task);
+
+        return reminderService.getRemindersByTask(taskId);
     }
-    @GetMapping("/due")
-    public List<Reminder> getDueReminders(){
-        return reminderService.getDueReminders();
-    }
+
 }
