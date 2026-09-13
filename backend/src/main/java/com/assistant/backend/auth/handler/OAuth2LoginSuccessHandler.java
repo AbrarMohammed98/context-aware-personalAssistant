@@ -2,7 +2,7 @@ package com.assistant.backend.auth.handler;
 
 import com.assistant.backend.auth.service.JwtService;
 import com.assistant.backend.user.entity.User;
-import com.assistant.backend.user.repository.UserRepository;
+import com.assistant.backend.user.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,10 +16,10 @@ import java.io.IOException;
 @Component
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtService jwtService;
-    public OAuth2LoginSuccessHandler(UserRepository userRepository, JwtService jwtService) {
-        this.userRepository = userRepository;
+    public OAuth2LoginSuccessHandler(UserService userService, JwtService jwtService) {
+        this.userService = userService;
         this.jwtService = jwtService;
     }
 
@@ -35,15 +35,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String name = oauth2User.getAttribute("name");
         String picture = oauth2User.getAttribute("picture");
 
-        User user = userRepository.findByGoogleId(googleId)
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setGoogleId(googleId);
-                    newUser.setEmail(email);
-                    newUser.setName(name);
-                    newUser.setPictureUrl(picture);
-                    return userRepository.save(newUser);
-                });
+        User user = userService.findOrCreateUser(googleId, email, name, picture);
         String token = jwtService.generateToken(user.getId(), user.getEmail());
         response.setContentType("application/json");
         response.getWriter().write("{\"token\": \"" + token + "\", \"userId\": " + user.getId() + ", \"email\": \"" + user.getEmail() + "\"}");
