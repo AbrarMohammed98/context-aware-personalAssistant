@@ -1,9 +1,17 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginScreen from './screens/LoginScreen';
-import './App.css'
+import AuthCallback from './screens/AuthCallback';
 
 function App() {
-  return <LoginScreen />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginScreen />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/dashboard" element={<h1>Dashboard (coming next hour)</h1>} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
