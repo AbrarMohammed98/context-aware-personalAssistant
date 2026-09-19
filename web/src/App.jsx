@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginScreen from './screens/LoginScreen';
 import AuthCallback from './screens/AuthCallback';
+import DashboardScreen from './screens/DashboardScreen';
 
 function App() {
   return (
@@ -8,7 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginScreen />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route path="/dashboard" element={<h1>Dashboard (coming next hour)</h1>} />
+        <Route path="/dashboard" element={<DashboardScreen />} />
       </Routes>
     </BrowserRouter>
   );
