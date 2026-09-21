@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getTasks, createTask } from '../services/taskService';
+import { logout } from '../services/authService';
 
 export default function DashboardScreen() {
   const [tasks, setTasks] = useState([]);
@@ -26,6 +27,7 @@ export default function DashboardScreen() {
           <li key={task.id}>{task.title}</li>
         ))}
       </ul>
+      <button onClick={logout} style={{ float: 'right' }}>Logout</button>
     </div>
   );
 }
