@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './App.css';
 import LoginScreen from './screens/LoginScreen';
 import AuthCallback from './screens/AuthCallback';
 import DashboardScreen from './screens/DashboardScreen';

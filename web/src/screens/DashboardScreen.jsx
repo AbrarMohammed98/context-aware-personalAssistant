@@ -18,16 +18,32 @@ export default function DashboardScreen() {
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: '50px auto' }}>
-      <h1>Your Tasks</h1>
-      <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="New task" />
-      <button onClick={handleAdd}>Add</button>
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id}>{task.title}</li>
-        ))}
-      </ul>
-      <button onClick={logout} style={{ float: 'right' }}>Logout</button>
+    <div className="dashboard">
+      <div className="dashboard-header">
+        <h1 className="dashboard-title">Your Tasks</h1>
+        <button className="logout-btn" onClick={logout}>Logout</button>
+      </div>
+
+      <div className="task-input-row">
+        <input
+          className="task-input"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="New task"
+          onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+        />
+        <button className="add-btn" onClick={handleAdd}>Add</button>
+      </div>
+
+      {tasks.length === 0 ? (
+        <p className="empty-state">No tasks yet — add one above</p>
+      ) : (
+        <ul className="task-list">
+          {tasks.map((task) => (
+            <li key={task.id} className="task-item">{task.title}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
