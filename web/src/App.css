@@ -115,6 +115,32 @@
   font-size: 0.95rem;
 }
 
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.task-row span {
+  flex: 1;
+}
+
+.task-done {
+  text-decoration: line-through;
+  color: #71717a;
+}
+
+.delete-btn {
+  background: transparent;
+  color: #71717a;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+}
+
+.delete-btn:hover {
+  color: #ef4444;
+}
+
 .empty-state {
   color: #71717a;
   text-align: center;

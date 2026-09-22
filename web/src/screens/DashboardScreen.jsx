@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getTasks, createTask } from '../services/taskService';
+import { getTasks, createTask, deleteTask, updateTask } from '../services/taskService';
 import { logout } from '../services/authService';
 
 export default function DashboardScreen() {
@@ -15,6 +15,16 @@ export default function DashboardScreen() {
     const newTask = await createTask({ title });
     setTasks([...tasks, newTask]);
     setTitle('');
+  };
+
+  const handleToggle = async (task) => {
+    const updated = await updateTask(task.id, { ...task, completed: !task.completed });
+    setTasks(tasks.map(t => t.id === task.id ? updated : t));
+  };
+
+  const handleDelete = async (id) => {
+    await deleteTask(id);
+    setTasks(tasks.filter(t => t.id !== id));
   };
 
   return (
@@ -40,7 +50,17 @@ export default function DashboardScreen() {
       ) : (
         <ul className="task-list">
           {tasks.map((task) => (
-            <li key={task.id} className="task-item">{task.title}</li>
+            <li key={task.id} className="task-item">
+              <div className="task-row">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => handleToggle(task)}
+                />
+                <span className={task.completed ? 'task-done' : ''}>{task.title}</span>
+                <button className="delete-btn" onClick={() => handleDelete(task.id)}>✕</button>
+              </div>
+            </li>
           ))}
         </ul>
       )}
