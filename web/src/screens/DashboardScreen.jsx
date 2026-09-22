@@ -8,9 +8,14 @@ export default function DashboardScreen() {
   const [title, setTitle] = useState('');
   const [remindingTaskId, setRemindingTaskId] = useState(null);
   const [remindAt, setRemindAt] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    getTasks().then(setTasks);
+    getTasks()
+      .then(setTasks)
+      .catch(() => setError('Failed to load tasks. Is the backend running?'))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleAdd = async () => {
@@ -44,6 +49,9 @@ export default function DashboardScreen() {
         <h1 className="dashboard-title">Your Tasks</h1>
         <button className="logout-btn" onClick={logout}>Logout</button>
       </div>
+
+      {loading && <p className="status-msg">Loading tasks...</p>}
+      {error && <p className="status-msg error">{error}</p>}
 
       <div className="task-input-row">
         <input

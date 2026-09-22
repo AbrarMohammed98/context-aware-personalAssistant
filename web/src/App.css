@@ -169,6 +169,17 @@
   font-size: 0.85rem;
 }
 
+.status-msg {
+  text-align: center;
+  padding: 16px;
+  color: #a1a1aa;
+  font-size: 0.9rem;
+}
+
+.status-msg.error {
+  color: #ef4444;
+}
+
 .empty-state {
   color: #71717a;
   text-align: center;
