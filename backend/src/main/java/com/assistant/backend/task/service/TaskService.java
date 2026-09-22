@@ -23,6 +23,11 @@ public class TaskService {
                 .orElseThrow(() -> new RuntimeException("User not found")));
         return taskRepository.save(task);
     }
+    public Task updateTask(Long id, Task updates) {
+        Task task = getTaskById(id);
+        task.setCompleted(updates.isCompleted());
+        return taskRepository.save(task);
+    }
     public Task getTaskById(Long id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
