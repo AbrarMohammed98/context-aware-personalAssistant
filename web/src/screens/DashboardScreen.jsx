@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { getTasks, createTask, deleteTask, updateTask } from '../services/taskService';
+import { createReminder } from '../services/reminderService';
 import { logout } from '../services/authService';
 
 export default function DashboardScreen() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState('');
+  const [remindingTaskId, setRemindingTaskId] = useState(null);
+  const [remindAt, setRemindAt] = useState('');
 
   useEffect(() => {
     getTasks().then(setTasks);
@@ -25,6 +28,14 @@ export default function DashboardScreen() {
   const handleDelete = async (id) => {
     await deleteTask(id);
     setTasks(tasks.filter(t => t.id !== id));
+  };
+
+  const handleSetReminder = async (taskId) => {
+    if (!remindAt) return;
+    await createReminder(taskId, remindAt);
+    setRemindingTaskId(null);
+    setRemindAt('');
+    alert('Reminder set!');
   };
 
   return (
@@ -52,14 +63,22 @@ export default function DashboardScreen() {
           {tasks.map((task) => (
             <li key={task.id} className="task-item">
               <div className="task-row">
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() => handleToggle(task)}
-                />
+                <input type="checkbox" checked={task.completed} onChange={() => handleToggle(task)} />
                 <span className={task.completed ? 'task-done' : ''}>{task.title}</span>
+                <button className="reminder-btn" onClick={() => setRemindingTaskId(task.id)}>⏰</button>
                 <button className="delete-btn" onClick={() => handleDelete(task.id)}>✕</button>
               </div>
+
+              {remindingTaskId === task.id && (
+                <div className="reminder-form">
+                  <input
+                    type="datetime-local"
+                    value={remindAt}
+                    onChange={(e) => setRemindAt(e.target.value)}
+                  />
+                  <button onClick={() => handleSetReminder(task.id)}>Set</button>
+                </div>
+              )}
             </li>
           ))}
         </ul>
