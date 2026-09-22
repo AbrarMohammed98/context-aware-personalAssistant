@@ -44,8 +44,14 @@ public class TaskService {
         return taskRepository.findByUserId(userId);
     }
 
+    public Task updateTask(Long id, Task updates) {
+        Task task = getTaskById(id); // existing ownership check
+        task.setCompleted(updates.isCompleted());
+        return taskRepository.save(task);
+    }
+
     public void deleteTask(Long id) {
-        Task task = getTaskById(id);
+        Task task = getTaskById(id); // existing ownership check
         reminderRepository.deleteAll(reminderRepository.findByTaskId(id));
         taskRepository.delete(task);
     }
