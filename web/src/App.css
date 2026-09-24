@@ -180,6 +180,20 @@
   color: #ef4444;
 }
 
+.task-due {
+  font-size: 0.8rem;
+  color: #a1a1aa;
+  margin-top: 4px;
+  padding-left: 30px;
+}
+
+.task-reminder {
+  font-size: 0.8rem;
+  color: #818cf8;
+  margin-top: 2px;
+  padding-left: 30px;
+}
+
 .empty-state {
   color: #71717a;
   text-align: center;

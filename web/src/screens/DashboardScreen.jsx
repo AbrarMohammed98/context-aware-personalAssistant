@@ -2,6 +2,17 @@ import { useEffect, useState } from 'react';
 import { getTasks, createTask, deleteTask, updateTask } from '../services/taskService';
 import { createReminder } from '../services/reminderService';
 import { logout } from '../services/authService';
+import toast from 'react-hot-toast';
+
+function formatDateTime(isoString) {
+  const date = new Date(isoString);
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
 
 export default function DashboardScreen() {
   const [tasks, setTasks] = useState([]);
@@ -10,6 +21,8 @@ export default function DashboardScreen() {
   const [remindAt, setRemindAt] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dueDate, setDueDate] = useState('');
+  const [taskReminders, setTaskReminders] = useState({});
 
   useEffect(() => {
     getTasks()
@@ -20,27 +33,47 @@ export default function DashboardScreen() {
 
   const handleAdd = async () => {
     if (!title.trim()) return;
-    const newTask = await createTask({ title });
-    setTasks([...tasks, newTask]);
-    setTitle('');
+    try {
+      const newTask = await createTask({ title, dueAt: dueDate || null });
+      setTasks(prev => [...prev, newTask]);
+      setTitle('');
+      setDueDate('');
+      toast.success('Task added');
+    } catch {
+      toast.error('Could not add task');
+    } 
   };
 
   const handleToggle = async (task) => {
-    const updated = await updateTask(task.id, { ...task, completed: !task.completed });
-    setTasks(tasks.map(t => t.id === task.id ? updated : t));
+    try {
+      const updated = await updateTask(task.id, { ...task, completed: !task.completed });
+      setTasks(prevTasks => prevTasks.map(t => t.id === task.id ? updated : t));
+    } catch {
+      toast.error('Could not update task');
+    }
   };
 
   const handleDelete = async (id) => {
-    await deleteTask(id);
-    setTasks(tasks.filter(t => t.id !== id));
+    try {
+      await deleteTask(id);
+      setTasks(prevTasks => prevTasks.filter(t => t.id !== id));
+      toast.success('Task deleted');
+    } catch {
+      toast.error('Could not delete task');
+    }
   };
 
   const handleSetReminder = async (taskId) => {
     if (!remindAt) return;
-    await createReminder(taskId, remindAt);
-    setRemindingTaskId(null);
-    setRemindAt('');
-    alert('Reminder set!');
+    try {
+      await createReminder(taskId, remindAt);
+      setTaskReminders(prev => ({ ...prev, [taskId]: remindAt }));
+      setRemindingTaskId(null);
+      setRemindAt('');
+      toast.success('Reminder set!');
+    } catch {
+      toast.error('Could not set reminder');
+    }
   };
 
   return (
@@ -61,6 +94,12 @@ export default function DashboardScreen() {
           placeholder="New task"
           onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
         />
+        <input
+          type="datetime-local"
+          className="task-input"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
         <button className="add-btn" onClick={handleAdd}>Add</button>
       </div>
 
@@ -76,6 +115,12 @@ export default function DashboardScreen() {
                 <button className="reminder-btn" onClick={() => setRemindingTaskId(task.id)}>⏰</button>
                 <button className="delete-btn" onClick={() => handleDelete(task.id)}>✕</button>
               </div>
+              {task.dueAt && (
+                <p className="task-due">Due: {formatDateTime(task.dueAt)}</p>
+              )}
+              {taskReminders[task.id] && (
+                <p className="task-reminder">🔔 Reminder: {formatDateTime(taskReminders[task.id])}</p>
+              )}
 
               {remindingTaskId === task.id && (
                 <div className="reminder-form">
