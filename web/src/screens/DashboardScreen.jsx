@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getTasks, createTask, deleteTask, updateTask } from '../services/taskService';
 import { createReminder } from '../services/reminderService';
 import { logout } from '../services/authService';
+import { parseIntent } from '../services/nlpService';
 import toast from 'react-hot-toast';
 
 function formatDateTime(isoString) {
@@ -23,6 +24,8 @@ export default function DashboardScreen() {
   const [error, setError] = useState(null);
   const [dueDate, setDueDate] = useState('');
   const [taskReminders, setTaskReminders] = useState({});
+  const [quickText, setQuickText] = useState('');
+  const [parsing, setParsing] = useState(false);
 
   useEffect(() => {
     getTasks()
@@ -76,6 +79,32 @@ export default function DashboardScreen() {
     }
   };
 
+  const handleQuickAdd = async () => {
+    if (!quickText.trim()) return;
+    setParsing(true);
+    try {
+      const parsed = await parseIntent(quickText);
+      const newTask = await createTask({
+        title: parsed.title,
+        description: parsed.description,
+        dueAt: parsed.dueAt,
+      });
+      setTasks(prev => [...prev, newTask]);
+
+      if (parsed.remindAt) {
+        await createReminder(newTask.id, parsed.remindAt);
+        setTaskReminders(prev => ({ ...prev, [newTask.id]: parsed.remindAt }));
+      }
+
+      setQuickText('');
+      toast.success(`Added: ${parsed.title}`);
+    } catch {
+      toast.error('Could not understand that — try rephrasing');
+    } finally {
+      setParsing(false);
+    }
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -85,6 +114,20 @@ export default function DashboardScreen() {
 
       {loading && <p className="status-msg">Loading tasks...</p>}
       {error && <p className="status-msg error">{error}</p>}
+
+      <div className="quick-add">
+        <input
+          className="task-input quick-add-input"
+          placeholder='Try: "remind me to submit report Friday at 5pm"'
+          value={quickText}
+          onChange={(e) => setQuickText(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleQuickAdd()}
+          disabled={parsing}
+        />
+        <button className="add-btn" onClick={handleQuickAdd} disabled={parsing}>
+          {parsing ? 'Thinking...' : '✨ Quick Add'}
+        </button>
+      </div>
 
       <div className="task-input-row">
         <input

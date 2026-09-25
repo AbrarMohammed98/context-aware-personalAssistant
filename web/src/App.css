@@ -194,6 +194,16 @@
   padding-left: 30px;
 }
 
+.quick-add {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.quick-add-input {
+  border-color: #6366f1;
+}
+
 .empty-state {
   color: #71717a;
   text-align: center;
