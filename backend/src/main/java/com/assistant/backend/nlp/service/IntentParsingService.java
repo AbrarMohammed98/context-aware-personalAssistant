@@ -1,6 +1,8 @@
 package com.assistant.backend.nlp.service;
 
 import com.assistant.backend.nlp.dto.ParsedIntent;
+import com.assistant.backend.nlp.entity.ParseLog;
+import com.assistant.backend.nlp.repository.ParseLogRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,11 +22,13 @@ public class IntentParsingService {
     private final String apiKey;
     private final String model;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ParseLogRepository parseLogRepository;
 
     public IntentParsingService(@Value("${groq.api-key}") String apiKey,
-                                @Value("${groq.model}") String model) {
+                                @Value("${groq.model}") String model, ParseLogRepository parseLogRepository) {
         this.apiKey = apiKey;
         this.model = model;
+        this.parseLogRepository = parseLogRepository;
         this.webClient = WebClient.builder()
                 .baseUrl("https://api.groq.com")
                 .build();
@@ -66,7 +70,13 @@ public class IntentParsingService {
                 )
                 .bodyToMono(String.class)
                 .block();
-        return extractParsedIntent(response);
+
+        ParsedIntent result = extractParsedIntent(response);
+        ParseLog log = new ParseLog();
+        log.setRawInput(userInput);
+        log.setParsedResult(result.toString());
+        parseLogRepository.save(log);
+        return result;
     }
 
     private ParsedIntent extractParsedIntent(String rawResponse) {
