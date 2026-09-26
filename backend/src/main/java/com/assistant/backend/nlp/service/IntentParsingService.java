@@ -66,7 +66,6 @@ public class IntentParsingService {
                 )
                 .bodyToMono(String.class)
                 .block();
-
         return extractParsedIntent(response);
     }
 

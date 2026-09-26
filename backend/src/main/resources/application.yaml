@@ -51,7 +51,6 @@ jwt:
   expiration-ms: 86400000
 server:
   port: 8080
-
 groq:
   api-key: ${GROQ_API_KEY}
   model: openai/gpt-oss-120b
