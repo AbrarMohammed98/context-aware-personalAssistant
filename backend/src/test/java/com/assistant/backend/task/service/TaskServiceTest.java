@@ -46,7 +46,15 @@ class TaskServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(taskRepository.save(inputTask)).thenReturn(inputTask);
 
+        try (org.mockito.MockedStatic<com.assistant.backend.auth.util.SecurityUtil> mockedSecurity =
+                     org.mockito.Mockito.mockStatic(com.assistant.backend.auth.util.SecurityUtil.class)) {
+            mockedSecurity.when(com.assistant.backend.auth.util.SecurityUtil::getCurrentUserId).thenReturn(1L);
 
+            Task result = taskService.createTask(inputTask);
+
+            assertEquals(testUser, result.getUser());
+            verify(taskRepository).save(inputTask);
+        }
     }
 
     @Test
