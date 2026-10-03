@@ -3,6 +3,7 @@ package com.assistant.backend.reminder.entity;
 
 import com.assistant.backend.task.entity.Task;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,7 @@ public class Reminder {
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
+    @NotNull(message = "Reminder time is required")
     @Column (nullable = false)
     private LocalDateTime remindAt;
 

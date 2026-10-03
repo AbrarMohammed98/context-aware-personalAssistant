@@ -3,6 +3,7 @@ package com.assistant.backend.task.controller;
 import com.assistant.backend.auth.util.SecurityUtil;
 import com.assistant.backend.task.entity.Task;
 import com.assistant.backend.task.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task){
+    public Task createTask(@Valid @RequestBody Task task){
         return taskService.createTask(task);
     }
 

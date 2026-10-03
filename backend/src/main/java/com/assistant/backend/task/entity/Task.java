@@ -2,6 +2,8 @@ package com.assistant.backend.task.entity;
 
 import com.assistant.backend.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
@@ -12,14 +14,18 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (nullable = false)
+    @NotBlank(message = "Title is required")
+    @Size(max = 200, message = "Title must be under 200 characters")
+    @Column(nullable = false)
     private String title;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Size(max = 1000, message = "Description must be under 1000 characters")
     private String description;
+
     private LocalDateTime dueAt;
     private boolean completed = false;
     private LocalDateTime createdAt = LocalDateTime.now();

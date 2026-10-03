@@ -3,6 +3,7 @@ package com.assistant.backend.reminder.controller;
 import com.assistant.backend.reminder.entity.Reminder;
 import com.assistant.backend.reminder.service.ReminderService;
 import com.assistant.backend.task.entity.Task;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class ReminderController {
         this.reminderService=reminderService;
     }
     @PostMapping
-    public Reminder createReminder(@RequestBody Reminder reminder){
+    public Reminder createReminder(@Valid @RequestBody Reminder reminder){
         return reminderService.createReminder(reminder);
     }
 
